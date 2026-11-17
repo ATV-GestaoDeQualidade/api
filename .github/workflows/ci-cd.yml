@@ -1,0 +1,75 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main, develop, 'feature/**', 'release/**', 'hotfix/**']
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build-test:
+    name: Build e Testes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - run: dotnet restore
+      - run: dotnet build --no-restore -c Release
+      - run: dotnet test --no-build -c Release --logger "trx" --collect:"XPlat Code Coverage"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: resultados-testes
+          path: '**/TestResults/**'
+
+  docker:
+    name: Validar imagem Docker
+    needs: build-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t minhaapi:${{ github.sha }} .
+
+  deploy-qa-api:
+    name: Deploy qa-api
+    needs: docker
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    environment: qa-api
+    steps:
+      - name: Disparar deploy no EasyPanel
+        env:
+          WEBHOOK: ${{ secrets.EASYPANEL_WEBHOOK }}
+        run: curl -fsS "$WEBHOOK"
+      - name: Health check
+        env:
+          API_URL: ${{ secrets.API_URL }}
+        run: |
+          for i in $(seq 1 20); do
+            curl -fsS "$API_URL/health" && exit 0
+            sleep 15
+          done
+          exit 1
+
+  deploy-prd-api:
+    name: Deploy prd-api
+    needs: docker
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: prd-api
+    steps:
+      - name: Disparar deploy no EasyPanel
+        env:
+          WEBHOOK: ${{ secrets.EASYPANEL_WEBHOOK }}
+        run: curl -fsS "$WEBHOOK"
+      - name: Health check
+        env:
+          API_URL: ${{ secrets.API_URL }}
+        run: |
+          for i in $(seq 1 20); do
+            curl -fsS "$API_URL/health" && exit 0
+            sleep 15
+          done
+          exit 1
