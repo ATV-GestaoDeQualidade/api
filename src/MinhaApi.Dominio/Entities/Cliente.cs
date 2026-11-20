@@ -19,8 +19,9 @@ public class Cliente
         if (!DocumentoValidator.EhCpfOuCnpjValido(cpfCnpj))
             throw new ArgumentException("O CPF ou CNPJ informado é inválido.", nameof(cpfCnpj));
 
-        if (string.IsNullOrWhiteSpace(telefone))
-            throw new ArgumentException("O telefone do cliente é obrigatório.", nameof(telefone));
+        var digitosTelefone = DocumentoValidator.LimparFormatacao(telefone);
+        if (digitosTelefone.Length < 10)
+            throw new ArgumentException("O telefone deve conter DDD e número válido (mínimo 10 dígitos).", nameof(telefone));
 
         if (!DocumentoValidator.EhEmailValido(email))
             throw new ArgumentException("O e-mail informado possui formato inválido.", nameof(email));

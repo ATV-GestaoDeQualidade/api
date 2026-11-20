@@ -104,4 +104,22 @@ public class ClienteTests
 
         Assert.Contains("Já existe um cliente cadastrado", excecao.Message);
     }
+    [Theory]
+    [InlineData("12345")]
+    [InlineData("(35) 999")]
+    [InlineData("")]
+    public void Cadastrar_ComTelefoneInvalido_DeveLancarArgumentException(string telefoneInvalido)
+    {
+        var service = new ClienteService();
+
+        var excecao = Assert.Throws<ArgumentException>(() =>
+            service.Cadastrar(
+                "Lucas Mendes",
+                "52998224725",
+                telefoneInvalido,
+                "lucas@email.com",
+                "Rua C, 50"));
+
+        Assert.Contains("telefone", excecao.Message, StringComparison.OrdinalIgnoreCase);
+    }    
 }
