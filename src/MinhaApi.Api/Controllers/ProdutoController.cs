@@ -19,19 +19,18 @@ public sealed class ProdutoController : ControllerBase
     [ProducesResponseType(typeof(ProdutoResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
-    public ActionResult<ProdutoResponse> Cadastrar(
+    public async Task<ActionResult<ProdutoResponse>> Cadastrar(
         [FromBody] CreateProdutoRequest request,
         CancellationToken cancellationToken)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        var produto = _produtoService.Cadastrar(
+        var produto = await _produtoService.CadastrarAsync(
             request.Nome,
             request.Categoria,
             request.CodigoBarras,
             request.Preco,
             request.NumeroSerie,
-            request.Estoque);
+            request.Estoque,
+            cancellationToken);
 
         var response = ToResponse(produto);
         return CreatedAtAction(nameof(BuscarPorId), new { id = produto.Id }, response);
@@ -39,20 +38,21 @@ public sealed class ProdutoController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(typeof(IReadOnlyCollection<ProdutoResponse>), StatusCodes.Status200OK)]
-    public ActionResult<IReadOnlyCollection<ProdutoResponse>> Listar(CancellationToken cancellationToken)
+    public async Task<ActionResult<IReadOnlyCollection<ProdutoResponse>>> Listar(
+        CancellationToken cancellationToken)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-        return Ok(_produtoService.ListarTodos().Select(ToResponse).ToArray());
+        var produtos = await _produtoService.ListarTodosAsync(cancellationToken);
+        return Ok(produtos.Select(ToResponse).ToArray());
     }
 
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(ProdutoResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<ProdutoResponse> BuscarPorId(Guid id, CancellationToken cancellationToken)
+    public async Task<ActionResult<ProdutoResponse>> BuscarPorId(
+        Guid id,
+        CancellationToken cancellationToken)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        var produto = _produtoService.BuscarPorId(id);
+        var produto = await _produtoService.BuscarPorIdAsync(id, cancellationToken);
         return produto is null ? NotFound() : Ok(ToResponse(produto));
     }
 

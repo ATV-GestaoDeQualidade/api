@@ -1,17 +1,19 @@
 using System.Text.Json.Serialization;
 using MinhaApi.Api.Middleware;
-using MinhaApi.Dominio.Services;
+using MinhaApi.Infraestrutura;
 
 namespace MinhaApi.Api.Extensions;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddApiDependencies(this IServiceCollection services)
+    public static IServiceCollection AddApiDependencies(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         services.AddHealthChecks();
-        services.AddSingleton<IProdutoService, ProdutoService>();
+        services.AddPersistence(configuration);
         services.AddExceptionHandler<ApiExceptionHandler>();
         services.AddProblemDetails();
         services.AddControllers().AddJsonOptions(options =>

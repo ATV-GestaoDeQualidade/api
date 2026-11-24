@@ -2,10 +2,14 @@ namespace MinhaApi.Dominio.Entities;
 
 public class ItemVenda
 {
-    public Produto Produto { get; private set; }
+    public Produto Produto { get; private set; } = null!;
     public int Quantidade { get; private set; }
     public decimal PrecoUnitario { get; private set; }
     public decimal Subtotal => PrecoUnitario * Quantidade;
+
+    private ItemVenda()
+    {
+    }
 
     public ItemVenda(Produto produto, int quantidade)
     {

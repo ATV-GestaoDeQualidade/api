@@ -1,0 +1,88 @@
+@baseUrl = http://localhost:5109
+
+### Cadastrar produto
+# @name cadastrarProduto
+POST {{baseUrl}}/api/produtos/
+Content-Type: application/json
+
+{
+  "nome": "Pastilha de Freio",
+  "categoria": "Freios",
+  "codigoBarras": "78910001",
+  "preco": 120.00,
+  "numeroSerie": "GOL-G5-2012",
+  "estoque": 8
+}
+
+### Listar produtos
+GET {{baseUrl}}/api/produtos/
+
+### Buscar produto por ID
+GET {{baseUrl}}/api/produtos/{{cadastrarProduto.response.body.$.id}}
+
+### Código de barras duplicado
+POST {{baseUrl}}/api/produtos/
+Content-Type: application/json
+
+{
+  "nome": "Pastilha Dianteira",
+  "categoria": "Freios",
+  "codigoBarras": "78910001",
+  "preco": 140.00,
+  "numeroSerie": "GOL-G5-2012",
+  "estoque": 4
+}
+
+### Produto inexistente
+GET {{baseUrl}}/api/produtos/00000000-0000-0000-0000-000000000000
+
+### Cadastrar cliente
+# @name cadastrarCliente
+POST {{baseUrl}}/api/clientes
+Content-Type: application/json
+
+{
+  "nome": "Carlos Almeida",
+  "cpfCnpj": "52998224725",
+  "telefone": "(35) 99999-1111",
+  "email": "carlos@email.com",
+  "endereco": "Rua A, 100 - Alfenas/MG"
+}
+
+### Listar clientes
+GET {{baseUrl}}/api/clientes
+
+### Buscar cliente por ID
+GET {{baseUrl}}/api/clientes/{{cadastrarCliente.response.body.$.id}}
+
+### Buscar cliente por documento
+GET {{baseUrl}}/api/clientes/buscar?documento=52998224725
+
+### Registrar venda
+# @name registrarVenda
+POST {{baseUrl}}/api/vendas
+Content-Type: application/json
+
+{
+  "clienteId": "{{cadastrarCliente.response.body.$.id}}",
+  "itens": [
+    {
+      "produtoId": "{{cadastrarProduto.response.body.$.id}}",
+      "quantidade": 2
+    }
+  ],
+  "formaPagamento": "Pix",
+  "desconto": 10
+}
+
+### Listar vendas
+GET {{baseUrl}}/api/vendas
+
+### Buscar venda por ID
+GET {{baseUrl}}/api/vendas/{{registrarVenda.response.body.$.id}}
+
+### Listar vendas do cliente
+GET {{baseUrl}}/api/vendas/cliente/{{cadastrarCliente.response.body.$.id}}
+
+### Verificar saúde da API
+GET {{baseUrl}}/health

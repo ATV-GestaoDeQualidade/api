@@ -3,7 +3,7 @@ using MinhaApi.Dominio.Enums;
 
 namespace MinhaApi.Dominio.Services;
 
-public sealed class ProdutoService : IProdutoService
+public sealed class ProdutoService
 {
     private readonly List<Produto> _produtos = new();
     private readonly object _lock = new();

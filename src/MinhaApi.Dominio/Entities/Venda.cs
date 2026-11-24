@@ -7,7 +7,7 @@ public class Venda
     private readonly List<ItemVenda> _itens;
 
     public Guid Id { get; private set; }
-    public Cliente Cliente { get; private set; }
+    public Cliente Cliente { get; private set; } = null!;
     public DateTime DataVenda { get; private set; }
     public FormaPagamento FormaPagamento { get; private set; }
     public decimal Desconto { get; private set; }
@@ -15,6 +15,11 @@ public class Venda
 
     public decimal Subtotal => _itens.Sum(i => i.Subtotal);
     public decimal ValorTotal => Subtotal - Desconto;
+
+    private Venda()
+    {
+        _itens = new List<ItemVenda>();
+    }
 
     public Venda(Cliente cliente, IEnumerable<ItemVenda> itens, FormaPagamento formaPagamento, decimal desconto = 0m)
     {

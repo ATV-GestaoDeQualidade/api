@@ -1,9 +1,11 @@
 using MinhaApi.Api.Extensions;
+using MinhaApi.Infraestrutura.Data;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddApiDependencies();
+builder.Services.AddApiDependencies(builder.Configuration);
 
 var app = builder.Build();
+await app.Services.MigrateDatabaseAsync();
 
 app.UseExceptionHandler();
 app.UseStatusCodePages();

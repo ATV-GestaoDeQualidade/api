@@ -5,15 +5,16 @@ namespace MinhaApi.Dominio.Services;
 
 public interface IProdutoService
 {
-    Produto Cadastrar(
+    Task<Produto> CadastrarAsync(
         string nome,
         CategoriaProduto categoria,
         string codigoBarras,
         decimal preco,
         string numeroSerie,
-        int estoque);
+        int estoque,
+        CancellationToken cancellationToken);
 
-    Produto? BuscarPorId(Guid id);
+    Task<Produto?> BuscarPorIdAsync(Guid id, CancellationToken cancellationToken);
 
-    IReadOnlyCollection<Produto> ListarTodos();
+    Task<IReadOnlyCollection<Produto>> ListarTodosAsync(CancellationToken cancellationToken);
 }

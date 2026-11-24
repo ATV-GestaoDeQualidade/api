@@ -5,11 +5,15 @@ namespace MinhaApi.Dominio.Entities;
 public class Cliente
 {
     public Guid Id { get; private set; }
-    public string Nome { get; private set; }
-    public string CpfCnpj { get; private set; }
-    public string Telefone { get; private set; }
-    public string Email { get; private set; }
-    public string Endereco { get; private set; }
+    public string Nome { get; private set; } = string.Empty;
+    public string CpfCnpj { get; private set; } = string.Empty;
+    public string Telefone { get; private set; } = string.Empty;
+    public string Email { get; private set; } = string.Empty;
+    public string Endereco { get; private set; } = string.Empty;
+
+    private Cliente()
+    {
+    }
 
     public Cliente(string nome, string cpfCnpj, string telefone, string email, string endereco)
     {

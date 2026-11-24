@@ -16,6 +16,10 @@ internal sealed class ApiExceptionHandler(ILogger<ApiExceptionHandler> logger) :
                 StatusCodes.Status400BadRequest,
                 "Requisição inválida",
                 "Os dados informados para a operação são inválidos."),
+            KeyNotFoundException => (
+                StatusCodes.Status404NotFound,
+                "Não encontrado",
+                "Um dos recursos informados não foi encontrado."),
             InvalidOperationException => (
                 StatusCodes.Status409Conflict,
                 "Conflito",
