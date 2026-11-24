@@ -1,10 +1,12 @@
-var builder = WebApplication.CreateBuilder(args);
+using MinhaApi.Api.Extensions;
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddHealthChecks();
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddApiDependencies();
 
 var app = builder.Build();
+
+app.UseExceptionHandler();
+app.UseStatusCodePages();
 
 if (!app.Environment.IsProduction())
 {
@@ -14,6 +16,6 @@ if (!app.Environment.IsProduction())
 
 app.UseHttpsRedirection();
 
-app.MapHealthChecks("/health");
+app.MapControllers();
 
 app.Run();

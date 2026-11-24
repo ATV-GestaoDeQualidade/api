@@ -1,0 +1,37 @@
+@baseUrl = http://localhost:5109
+
+### Cadastrar produto
+# @name cadastrarProduto
+POST {{baseUrl}}/api/produtos/
+Content-Type: application/json
+
+{
+  "nome": "Pastilha de Freio",
+  "categoria": "Freios",
+  "codigoBarras": "78910001",
+  "preco": 120.00,
+  "numeroSerie": "GOL-G5-2012",
+  "estoque": 8
+}
+
+### Listar produtos
+GET {{baseUrl}}/api/produtos/
+
+### Buscar produto por ID
+GET {{baseUrl}}/api/produtos/{{cadastrarProduto.response.body.$.id}}
+
+### Código de barras duplicado
+POST {{baseUrl}}/api/produtos/
+Content-Type: application/json
+
+{
+  "nome": "Pastilha Dianteira",
+  "categoria": "Freios",
+  "codigoBarras": "78910001",
+  "preco": 140.00,
+  "numeroSerie": "GOL-G5-2012",
+  "estoque": 4
+}
+
+### Produto inexistente
+GET {{baseUrl}}/api/produtos/00000000-0000-0000-0000-000000000000
