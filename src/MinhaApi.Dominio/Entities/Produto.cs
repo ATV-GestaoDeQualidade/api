@@ -5,12 +5,16 @@ namespace MinhaApi.Dominio.Entities;
 public class Produto
 {
     public Guid Id { get; private set; }
-    public string Nome { get; private set; }
+    public string Nome { get; private set; } = string.Empty;
     public CategoriaProduto Categoria { get; private set; }
-    public string CodigoBarras { get; private set; }
+    public string CodigoBarras { get; private set; } = string.Empty;
     public decimal Preco { get; private set; }
-    public string NumeroSerie { get; private set; }
+    public string NumeroSerie { get; private set; } = string.Empty;
     public int Estoque { get; private set; }
+
+    private Produto()
+    {
+    }
 
     public Produto(
         string nome,

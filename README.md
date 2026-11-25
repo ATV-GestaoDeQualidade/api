@@ -26,10 +26,12 @@ O sistema modela o núcleo de operações de uma **Loja de Autopeças e Acessór
 ## Tecnologias e Framework de Testes
 
 * **Linguagem / Plataforma:** C# (.NET 8)
+* **Persistência:** SQLite com Entity Framework Core; as migrations são aplicadas automaticamente ao iniciar a API.
 * **Framework de Testes Unitários:** **xUnit** (`2.5.3`) com `Microsoft.NET.Test.Sdk`
 * **Arquitetura da Solução (`MinhaApi.sln`):**
   * `src/MinhaApi.Dominio`: Entidades, Enums, Validadores e Serviços com as regras de negócio.
   * `src/MinhaApi.Api`: Camada de exposição Web API.
+  * `src/MinhaApi.Infraestrutura`: Persistência SQLite e configuração do Entity Framework Core.
   * `tests/MinhaApi.Testes`: Suíte de testes unitários automatizados cobrindo fluxos de sucesso, cálculos e tratamento de exceções.
 
 ---
@@ -63,3 +65,14 @@ dotnet build
 
 # 3. Executar todos os testes unitários
 dotnet test --verbosity normal
+```
+
+### Executar a API
+
+```bash
+dotnet run --project src/MinhaApi.Api
+```
+
+O SQLite é criado ou atualizado automaticamente na inicialização. A documentação interativa fica em `/swagger` durante o desenvolvimento, e há exemplos de chamadas em `src/MinhaApi.Api/api.http`.
+
+O catálogo pode ser filtrado por categoria, número de série ou ambos em `GET /api/produtos/filtrar`. Essa consulta exige ao menos um filtro; se não houver correspondências, retorna uma lista vazia.

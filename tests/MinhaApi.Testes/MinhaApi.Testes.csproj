@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\MinhaApi.Dominio\MinhaApi.Dominio.csproj" />
+    <ProjectReference Include="..\..\src\MinhaApi.Infraestrutura\MinhaApi.Infraestrutura.csproj" />
   </ItemGroup>
 
 </Project>
