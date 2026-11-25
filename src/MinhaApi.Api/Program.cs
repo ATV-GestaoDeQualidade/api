@@ -10,7 +10,7 @@ await app.Services.MigrateDatabaseAsync();
 app.UseExceptionHandler();
 app.UseStatusCodePages();
 
-if (!app.Environment.IsProduction())
+if (app.Configuration.GetValue<bool>("Swagger:Enabled"))
 {
     app.UseSwagger();
     app.UseSwaggerUI();

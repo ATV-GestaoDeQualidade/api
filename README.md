@@ -73,6 +73,6 @@ dotnet test --verbosity normal
 dotnet run --project src/MinhaApi.Api
 ```
 
-O SQLite é criado ou atualizado automaticamente na inicialização. A documentação interativa fica em `/swagger` durante o desenvolvimento, e há exemplos de chamadas em `src/MinhaApi.Api/api.http`.
+O SQLite é criado ou atualizado automaticamente na inicialização. O Swagger é controlado pela configuração `Swagger:Enabled`: fica ativado no ambiente `Development` e desativado por padrão nos demais ambientes. Você também pode sobrescrever essa opção com a variável de ambiente `Swagger__Enabled`. Há exemplos de chamadas em `src/MinhaApi.Api/api.http`.
 
 O catálogo pode ser filtrado por categoria, número de série ou ambos em `GET /api/produtos/filtrar`. Essa consulta exige ao menos um filtro; se não houver correspondências, retorna uma lista vazia.
