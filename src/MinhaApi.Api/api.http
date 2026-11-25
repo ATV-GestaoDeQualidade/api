@@ -17,6 +17,18 @@ Content-Type: application/json
 ### Listar produtos
 GET {{baseUrl}}/api/produtos/
 
+### Filtrar produtos por categoria
+GET {{baseUrl}}/api/produtos/filtrar?categoria=Motor
+
+### Filtrar produtos por número de série
+GET {{baseUrl}}/api/produtos/filtrar?numeroSerie=GOL-G5-2012
+
+### Filtrar produtos por categoria e número de série
+GET {{baseUrl}}/api/produtos/filtrar?categoria=Motor&numeroSerie=GOL-G5-2012
+
+### Filtrar sem critérios (retorna 400)
+GET {{baseUrl}}/api/produtos/filtrar
+
 ### Buscar produto por ID
 GET {{baseUrl}}/api/produtos/{{cadastrarProduto.response.body.$.id}}
 

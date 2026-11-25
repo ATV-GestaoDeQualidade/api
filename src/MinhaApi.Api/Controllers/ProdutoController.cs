@@ -1,4 +1,5 @@
 using MinhaApi.Dominio.DTOs.Produtos;
+using MinhaApi.Dominio.Enums;
 using MinhaApi.Dominio.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,6 +43,18 @@ public sealed class ProdutoController : ControllerBase
         CancellationToken cancellationToken)
     {
         var produtos = await _produtoService.ListarTodosAsync(cancellationToken);
+        return Ok(produtos.Select(ToResponse).ToArray());
+    }
+
+    [HttpGet("filtrar")]
+    [ProducesResponseType(typeof(IReadOnlyCollection<ProdutoResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<IReadOnlyCollection<ProdutoResponse>>> Filtrar(
+        [FromQuery] CategoriaProduto? categoria,
+        [FromQuery] string? numeroSerie,
+        CancellationToken cancellationToken)
+    {
+        var produtos = await _produtoService.FiltrarAsync(categoria, numeroSerie, cancellationToken);
         return Ok(produtos.Select(ToResponse).ToArray());
     }
 

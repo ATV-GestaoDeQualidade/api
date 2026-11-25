@@ -17,4 +17,9 @@ public interface IProdutoService
     Task<Produto?> BuscarPorIdAsync(Guid id, CancellationToken cancellationToken);
 
     Task<IReadOnlyCollection<Produto>> ListarTodosAsync(CancellationToken cancellationToken);
+
+    Task<IReadOnlyCollection<Produto>> FiltrarAsync(
+        CategoriaProduto? categoria,
+        string? numeroSerie,
+        CancellationToken cancellationToken);
 }

@@ -46,4 +46,32 @@ public sealed class ProdutoPersistenceService(MinhaApiDbContext dbContext) : IPr
 
     public async Task<IReadOnlyCollection<Produto>> ListarTodosAsync(CancellationToken cancellationToken) =>
         await dbContext.Produtos.AsNoTracking().ToArrayAsync(cancellationToken);
+
+    public async Task<IReadOnlyCollection<Produto>> FiltrarAsync(
+        CategoriaProduto? categoria,
+        string? numeroSerie,
+        CancellationToken cancellationToken)
+    {
+        var numeroSerieNormalizado = string.IsNullOrWhiteSpace(numeroSerie)
+            ? null
+            : numeroSerie.Trim().ToUpperInvariant();
+
+        if (!categoria.HasValue && numeroSerieNormalizado is null)
+            throw new ArgumentException("Informe ao menos uma categoria ou número de série.");
+
+        if (categoria.HasValue && !Enum.IsDefined(categoria.Value))
+            throw new ArgumentException("A categoria informada é inválida.", nameof(categoria));
+
+        var consulta = dbContext.Produtos.AsNoTracking().AsQueryable();
+
+        if (categoria.HasValue)
+            consulta = consulta.Where(produto => produto.Categoria == categoria.Value);
+
+        if (numeroSerieNormalizado is not null)
+            consulta = consulta.Where(produto => produto.NumeroSerie == numeroSerieNormalizado);
+
+        return await consulta
+            .OrderBy(produto => produto.Nome)
+            .ToArrayAsync(cancellationToken);
+    }
 }

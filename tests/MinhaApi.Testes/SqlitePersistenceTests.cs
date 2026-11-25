@@ -112,6 +112,72 @@ public class SqlitePersistenceTests
     }
 
     [Fact]
+    public async Task FiltrarProdutos_DeveCombinarCategoriaESerieEIgnorarMaiusculas()
+    {
+        await using var connection = new SqliteConnection("Data Source=:memory:");
+        await connection.OpenAsync();
+        var options = new DbContextOptionsBuilder<MinhaApiDbContext>()
+            .UseSqlite(connection)
+            .Options;
+        await using var dbContext = new MinhaApiDbContext(options);
+        await dbContext.Database.MigrateAsync();
+        var service = new ProdutoPersistenceService(dbContext);
+
+        await service.CadastrarAsync(
+            "Filtro de Óleo",
+            CategoriaProduto.Motor,
+            "78910001",
+            50.00m,
+            "GOL-G5-2012",
+            8,
+            CancellationToken.None);
+        await service.CadastrarAsync(
+            "Bomba de Combustível",
+            CategoriaProduto.Motor,
+            "78910002",
+            180.00m,
+            "CIVIC-G10",
+            3,
+            CancellationToken.None);
+        await service.CadastrarAsync(
+            "Pastilha de Freio",
+            CategoriaProduto.Freios,
+            "78910003",
+            120.00m,
+            "GOL-G5-2012",
+            5,
+            CancellationToken.None);
+
+        var porCategoria = await service.FiltrarAsync(
+            CategoriaProduto.Motor,
+            null,
+            CancellationToken.None);
+        var porSerie = await service.FiltrarAsync(
+            null,
+            "gol-g5-2012",
+            CancellationToken.None);
+        var combinado = await service.FiltrarAsync(
+            CategoriaProduto.Motor,
+            "gOl-G5-2012",
+            CancellationToken.None);
+        var semResultados = await service.FiltrarAsync(
+            CategoriaProduto.Motor,
+            "NAO-ENCONTRADO",
+            CancellationToken.None);
+
+        Assert.Equal(2, porCategoria.Count);
+        Assert.All(porCategoria, produto => Assert.Equal(CategoriaProduto.Motor, produto.Categoria));
+        Assert.Equal(2, porSerie.Count);
+        Assert.All(porSerie, produto => Assert.Equal("GOL-G5-2012", produto.NumeroSerie));
+        Assert.Equal("Filtro de Óleo", Assert.Single(combinado).Nome);
+        Assert.Empty(semResultados);
+        await Assert.ThrowsAsync<ArgumentException>(() =>
+            service.FiltrarAsync(null, " ", CancellationToken.None));
+        await Assert.ThrowsAsync<ArgumentException>(() =>
+            service.FiltrarAsync(null, null, CancellationToken.None));
+    }
+
+    [Fact]
     public async Task RegistrarVenda_ComEstoqueInsuficiente_DeveManterEstoqueESemVenda()
     {
         await using var connection = new SqliteConnection("Data Source=:memory:");
